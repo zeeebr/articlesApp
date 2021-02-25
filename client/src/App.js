@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useAuth } from './hooks/auth'
 import { AuthContext } from './context/AuthContext'
 import { NavBar } from './components/NavBar'
-import { Container, Row, Col } from 'react-bootstrap'
+import { Container, Row } from 'react-bootstrap'
 
 function App() {
   const { token, login, logout, userId } = useAuth()

@@ -20,6 +20,7 @@ export const NavBar = () => {
                 <Navbar.Brand>ArticlesApp</Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link as={NavLink} to="/main">Main</Nav.Link>
+                    <Nav.Link as={NavLink} to="/affil">Affiliations</Nav.Link>
                     <Nav.Link as={NavLink} to="/author">Authors</Nav.Link>
                     <Nav.Link as={NavLink} to="/correction">Correction</Nav.Link>
                 </Nav>

@@ -81,7 +81,7 @@ class Paper {
     async save(data) {
         try {
             await this.model.create(data)
-            logger(`Paper with id: ${data.eid} is written to the database!`)
+            //logger(`Paper with id: ${data.eid} is written to the database!`)
         } catch (err) {
             console.log(err)
         }
@@ -101,6 +101,32 @@ class Paper {
             for (let i in existId) data.set(existId[i].eid, true)
             
             return data
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async writeNew() {
+        try {
+            await this.model.update({ new: false }, {
+                where: {
+                    new: true
+                }
+            })
+
+            return true
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async resetNew() {
+        try {
+            await this.model.destroy({
+                where: {
+                  new: true
+                }
+            })
+
+            return true
         } catch (err) {
             console.log(err.message)
         }

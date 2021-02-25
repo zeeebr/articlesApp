@@ -42,7 +42,7 @@ export const ImportCsv = () => {
                         <Form.Group controlId="exampleForm.SelectCustom">
                             <Form.Label>Select base:</Form.Label>
                             <Form.Control as="select" onChange={(e) => setBase(e.target.value)} custom>
-                                <option value="" disabled selected>Choose your option</option>
+                                <option defaultValue="" disabled selected>Choose your option</option>
                                 <option value="scopus">Scopus</option>
                                 <option value="wos">Web of Science</option>
                             </Form.Control>

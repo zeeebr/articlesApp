@@ -16,10 +16,7 @@ class Author {
                 primaryKey: true
             },
             name: Sequelize.STRING,
-            alias: {
-                type: Sequelize.STRING,
-                unique: true
-            },
+            alias: Sequelize.STRING,
             inst: Sequelize.STRING,
             cathedra: Sequelize.STRING,
             frezee: Sequelize.BOOLEAN
@@ -63,6 +60,31 @@ class Author {
                 where: {
                     alias: author
                 },
+                raw: true
+            })
+            
+            return data
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async update(data) {
+        try {
+            await this.model.update(data, {
+                where: {
+                    id: data.id
+                }
+            })
+            
+            console.log('Author updated!')
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async list() {
+        try {
+            let data = await this.model.findAll({
+                attributes: ['alias'],
                 raw: true
             })
             

@@ -16,7 +16,6 @@ affil.sync()
 paper.sync()
 
 async function parser(csvData) {
-    
     let base
 
     if (csvData[0]['EID']) {
@@ -81,11 +80,10 @@ async function parser(csvData) {
         } else {
             console.log(`WTF? base = ${base}`)
         }
-        //console.log(data)
+        
         await paper.save(data)
     }
 
-    //await client.set('status', `15%`)
     console.log('done')
     return true
 }
@@ -107,7 +105,7 @@ async function getOurAuthors(data, base) {
         let arrOurAuthors = []
         for (let i in arrAffils) {
             let element = arrAffils[i].toLowerCase()
-            if (await checkOurAffil(element, base)) arrOurAuthors.push(arrAuthors[i])
+            if (await checkOurAffil(element, base)) arrOurAuthors.push(arrAffils[i])
         }
         let ourAuthors = arrOurAuthors.join(', ')
 
@@ -131,25 +129,24 @@ async function checkOurAffil(data, base) {
 }
 
 async function getOurAuthorsId(ourAuthors) {
-    //console.log(ourAuthors)
     let existOurAuthors = await author.list()
     let existOurAuthorsMap = new Map()
 
     existOurAuthors.forEach((element) => {
-        //console.log(element.name)
-        let regexpTest = /(.*)\s(.*\.)(.*\.)/
-
-        let test = regexpTest.test(element.name)
-        //console.log(test)
-
-        if (test) {
-            existOurAuthorsMap.set(element.name, element.id)
-            let shortName = element["name"].replace(regexpTest, '$1 $2')
-            existOurAuthorsMap.set(shortName, element.id)
-            //console.log(shortName)
-        } else {
-            existOurAuthorsMap.set(element.name, element.id)
+        let full = element.name.split(' ')
+        let initals = full[1].split('.')
+        
+        if (initals.length == 3) {
+            let fullName = full[0] + ' ' + initals[0].substring(0, 1) + '.' + initals[1].substring(0, 1) + '.'
+            existOurAuthorsMap.set(fullName, element.id)
             
+            let shortName = full[0] + ' ' + initals[0].substring(0, 1) + '.'
+            existOurAuthorsMap.set(shortName, element.id)
+        }  else if (initals.length == 2) {
+            let shortName = full[0] + ' ' + initals[0].substring(0, 1) + '.'
+            existOurAuthorsMap.set(shortName, element.id)
+        } else {
+            console.log(`Some error in parse of name ${element.name}...`)
         }
     })
     
@@ -165,7 +162,7 @@ async function getOurAuthorsId(ourAuthors) {
             ourAuthorsId.push(null)
         }
     }    
-    //console.log(existOurAuthorsMap)
+    
     return ourAuthorsId
 }
 

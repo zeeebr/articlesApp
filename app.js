@@ -6,6 +6,7 @@ require('./count')
 app.use(express.json({ extended: true, limit: '50mb' }))
 
 app.use('/', require('./routes/index.routes'))
+app.use('/affil', require('./routes/affil.routes'))
 app.use('/auth', require('./routes/auth.routes'))
 app.use('/author', require('./routes/author.routes'))
 app.use('/paper', require('./routes/paper.routes'))

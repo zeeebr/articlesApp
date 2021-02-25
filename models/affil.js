@@ -16,7 +16,10 @@ class Affil {
                 primaryKey: true
             },
             base: Sequelize.STRING,
-            affil: Sequelize.ARRAY(Sequelize.STRING)
+            affil: {
+                type: Sequelize.ARRAY(Sequelize.STRING),
+                unique: true
+            }
         }, {
             freezeTableName: true
         })
@@ -32,6 +35,18 @@ class Affil {
         try {
             await this.model.create(data)
             console.log(`New affil is written to the database!`)
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async delete(affil) {
+        try {
+            await this.model.destroy({
+                where: {
+                affil: affil
+                }
+            })
+            console.log(`Affil is deleted!`)
         } catch (err) {
             console.log(err.message)
         }
