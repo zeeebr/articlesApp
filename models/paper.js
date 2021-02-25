@@ -131,6 +131,64 @@ class Paper {
             console.log(err.message)
         }
     }
+    async findOne(eid) {
+        try {
+            let data = await this.model.findOne({
+                where: {
+                    eid: eid
+                },
+                raw: true
+            })
+            
+            return data
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async update(data) {
+        try {
+            await this.model.update(data, {
+                where: {
+                    eid: data.eid
+                }
+            })
+            
+            console.log('Paper updated!')
+            
+            return
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async delete(id) {
+        try {
+            await this.model.destroy({
+                where: {
+                    eid: id
+                }
+            })
+            
+            console.log('Paper deleted!')
+            
+            return
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async export() {
+        try {
+            let data = await this.model.findAll({
+                where: {
+                    new: true
+                },
+                raw: true
+            })
+            
+            return data
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
 }
 
 exports.Paper = Paper

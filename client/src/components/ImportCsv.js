@@ -30,10 +30,6 @@ export const ImportCsv = () => {
         await request('/paper/parser', 'POST', data)
     }
 
-    const clearData = () => {
-        setData(null)
-    }
-
     return(
         <Card border="dark">
             <Card.Header>Import CSV file</Card.Header>
@@ -41,8 +37,8 @@ export const ImportCsv = () => {
                     <Form>
                         <Form.Group controlId="exampleForm.SelectCustom">
                             <Form.Label>Select base:</Form.Label>
-                            <Form.Control as="select" onChange={(e) => setBase(e.target.value)} custom>
-                                <option defaultValue="" disabled selected>Choose your option</option>
+                            <Form.Control as="select" defaultValue="choose" onChange={(e) => setBase(e.target.value)} custom>
+                                <option value="choose" disabled>Choose your option</option>
                                 <option value="scopus">Scopus</option>
                                 <option value="wos">Web of Science</option>
                             </Form.Control>
@@ -52,7 +48,7 @@ export const ImportCsv = () => {
                         onFileLoaded={data => setData(data)} 
                         parserOptions={parseOptions(base)}
                     />}
-                    {data && <div><Button className="mt-3" onClick={postCsv}>Submit</Button>&nbsp;&nbsp;&nbsp;<Button className="mt-3" onClick={clearData}>Clear</Button></div>}
+                    {data && <div><Button className="mt-3" onClick={postCsv}>Submit</Button></div>}
                 </Card.Body>
         </Card>
     )

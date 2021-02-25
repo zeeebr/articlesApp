@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react'
 import CSVReader from 'react-csv-reader'
 import { useHttp } from '../hooks/http'
 import { useMessage } from '../hooks/message'
-import { Card, Container, Row, Col, Button, Form } from 'react-bootstrap'
-import { Typeahead } from 'react-bootstrap-typeahead'
+import { Card, Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap'
+import { Typeahead, ClearButton } from 'react-bootstrap-typeahead'
+import 'react-bootstrap-typeahead/css/Typeahead.css'
 
 export const Author = () => {
     const [data, setData] = useState(null)
+    const [name, setName] = useState(null)
     const [alias, setAlias] = useState(null)
-    const [arrOfAuthors, setArrOfAuthors] = useState([])
+    const [arrOfNames, setArrOfNames] = useState([])
+    const [arrOfAliases, setArrOfAliases] = useState([])
     const [author, setAuthor] = useState({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
     const { loading, request, error, clearError } = useHttp()
     const message = useMessage()
@@ -19,14 +22,22 @@ export const Author = () => {
     }, [error, message, clearError])
 
     useEffect(() => {
-        getListOfAuthors()
+        getListOfNames()
+        getListOfAliases()
     }, [])
+
     const parseOptions = { header: true }
 
-    const getListOfAuthors = async () => {
-        let resp = await request('/author/list', 'GET')
+    const getListOfNames = async () => {
+        let resp = await request('/author/list_names', 'GET')
         
-        setArrOfAuthors(resp)
+        setArrOfNames(resp)
+    }
+
+    const getListOfAliases = async () => {
+        let resp = await request('/author/list_aliases', 'GET')
+        
+        setArrOfAliases(resp)
     }
 
     const postCsv = async () => {
@@ -39,9 +50,26 @@ export const Author = () => {
         message(resp.message)
     }
 
-    const findAuthor = async () => {
-        setAuthor(null)
-        let resp = await request('/author/find_one', 'POST', new Array(alias))
+    const addAuthor = async () => {
+        let data = {
+            name: author.name, 
+            alias: author.alias, 
+            inst: author.inst, 
+            cathedra: author.cathedra, 
+            frezee: true
+        }
+        let resp = await request('/author/add', 'POST', data)
+        message(resp.message)
+    }
+
+    const deleteAuthor = async () => {
+        let resp = await request('/author/delete', 'POST', author)
+        setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
+        message(resp.message)
+    }
+
+    const findAuthorByName = async () => {
+        let resp = await request('/author/find_one_by_name', 'POST', { name: name })
         if(resp) {
             setAuthor({
                 id: resp.id,
@@ -54,8 +82,18 @@ export const Author = () => {
         }  
     }
 
-    const changeHandlerAlias = event => {
-        setAlias(event.target.value)
+    const findAuthorByAlias = async () => {
+        let resp = await request('/author/find_one_by_alias', 'POST', { alias: alias })
+        if(resp) {
+            setAuthor({
+                id: resp.id,
+                name: resp.name,
+                alias: resp.alias,
+                inst: resp.inst,
+                cathedra: resp.cathedra,
+                frezee: resp.frezee
+            })
+        }  
     }
 
     const changeHandlerAuthor = event => {
@@ -67,6 +105,58 @@ export const Author = () => {
             <Row>
                 <Col sm={3}>
                     <Card border="dark">
+                        <Card.Header>Correction of exist author (by name):</Card.Header>
+                        <Card.Body>
+                            <Form.Label>Name:</Form.Label>
+                            <Typeahead
+                                id="listOfAuthors"
+                                onChange={(selected) => {
+                                    setName(selected)
+                                }}
+                                placeholder="Enter name of author..." 
+                                name="name"
+                                options={arrOfNames} 
+                            >
+                                {({ onClear, selected }) => (
+                                    <div className="rbt-aux">
+                                        {!!selected.length && <ClearButton onClick={onClear} />}
+                                        {!selected.length && <Spinner animation="grow" size="sm" />}
+                                    </div>
+                                )}
+                            </Typeahead>
+                            <Form className="mt-3">
+                                <Button onClick={findAuthorByName}>Search</Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+
+                    <Card border="dark" className="mt-3">
+                        <Card.Header>Correction of exist author (by alias):</Card.Header>
+                        <Card.Body>
+                            <Form.Label>Alias:</Form.Label>
+                            <Typeahead
+                                id="listOfAliases"
+                                onChange={(selected) => {
+                                    setAlias(selected)
+                                }}
+                                placeholder="Enter alias of author..." 
+                                name="alias"
+                                options={arrOfAliases} 
+                            >
+                                {({ onClear, selected }) => (
+                                    <div className="rbt-aux">
+                                        {!!selected.length && <ClearButton onClick={onClear} />}
+                                        {!selected.length && <Spinner animation="grow" size="sm" />}
+                                    </div>
+                                )}
+                            </Typeahead>
+                            <Form className="mt-3">
+                                <Button onClick={findAuthorByAlias}>Search</Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+
+                    <Card border="dark" className="mt-3">
                         <Card.Header>Import CSV file (Authors)</Card.Header>
                             <Card.Body>
                                 <CSVReader 
@@ -76,35 +166,16 @@ export const Author = () => {
                                 {data && <Button onClick={postCsv} className="mt-3">Submit</Button>}
                             </Card.Body>
                     </Card>
-
-                    <Card border="dark" className="mt-3">
-                        <Card.Header>Correction of exist author:</Card.Header>
-                            <Card.Body>
-                                <Form.Label>Alias:</Form.Label>
-                                <Typeahead
-                                    id="allAliases"
-                                    onChange={(selected) => {
-                                        setAlias(selected)
-                                    }}
-                                    placeholder="Enter alias of author (on russian)" 
-                                    name="alias"
-                                    options={arrOfAuthors} 
-                                />
-                                <Form className="mt-3">
-                                    <Button onClick={findAuthor}>Search</Button>
-                                </Form>
-                            </Card.Body>
-                    </Card>
                 </Col>
                 <Col sm={9}>
                     <Card border="dark">
                         <Card.Header>Correction fields</Card.Header>
                         <Card.Body>
-                            {author && <Form>
+                            <Form>
                                 <Form.Label>Id</Form.Label>
                                 <Form.Control 
                                     type="text" 
-                                    defaultValue={author.id} 
+                                    value={author.id} 
                                     onChange={changeHandlerAuthor}
                                     name="name"
                                     disabled
@@ -112,42 +183,64 @@ export const Author = () => {
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control 
                                     type="text" 
-                                    defaultValue={author.name} 
+                                    value={author.name} 
                                     onChange={changeHandlerAuthor}
                                     name="name"
                                 />
                                 <Form.Label className="mt-3">Alias</Form.Label>
                                 <Form.Control 
                                     type="text"  
-                                    defaultValue={author.alias} 
+                                    value={author.alias} 
                                     onChange={changeHandlerAuthor}
                                     name="alias"
                                 />
                                 <Form.Label className="mt-3">Institute</Form.Label>
                                 <Form.Control 
                                     type="text"  
-                                    defaultValue={author.inst} 
+                                    value={author.inst} 
                                     onChange={changeHandlerAuthor}
                                     name="inst"
                                 />
                                 <Form.Label className="mt-3">Cathedra</Form.Label>
                                 <Form.Control 
                                     type="text" 
-                                    defaultValue={author.cathedra} 
+                                    value={author.cathedra} 
                                     onChange={changeHandlerAuthor}
                                     name="cathedra"
                                 />
                                 <Form.Label className="mt-3">Frezee</Form.Label>
                                 <Form.Control 
                                     type="text" 
-                                    defaultValue={author.frezee} 
+                                    value={author.frezee} 
                                     onChange={changeHandlerAuthor}
                                     name="frezee"
                                 />
-                            </Form>}
+                            </Form>
                         </Card.Body>
                         <Card.Footer>
-                            <Button onClick={updateAuthor}>Update Author</Button>
+                            <Button 
+                                onClick={updateAuthor}
+                            >
+                                Update Author
+                            </Button>
+                            <Button 
+                                onClick={() => setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})}
+                                className="ml-3"
+                            >
+                                Clear
+                            </Button>
+                            <Button 
+                                onClick={addAuthor}
+                                className="ml-3"
+                            >
+                                Add Author
+                            </Button>
+                            <Button 
+                                onClick={deleteAuthor}
+                                className="ml-3"
+                            >
+                                Delete Author
+                            </Button>
                         </Card.Footer>
                     </Card>
                     

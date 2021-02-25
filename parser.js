@@ -30,7 +30,7 @@ async function parser(csvData) {
         let data = {}
 
         if (base == 'scopus') {
-            let eid = csvData[i]['EID']
+            let eid = csvData[i]['EID'].substr(7)
             if (existId.has(eid)) continue
 
             let ourAuthors = await getOurAuthors(csvData[i], base)
@@ -54,7 +54,7 @@ async function parser(csvData) {
             data['frezee'] = false
             data['new'] = true
         } else if (base == 'wos') {
-            let eid = csvData[i]['UT']
+            let eid = csvData[i]['UT'].substr(4)
             if (existId.has(eid)) continue
 
             let ourAuthors = await getOurAuthors(csvData[i], base)
@@ -105,7 +105,25 @@ async function getOurAuthors(data, base) {
         let arrOurAuthors = []
         for (let i in arrAffils) {
             let element = arrAffils[i].toLowerCase()
-            if (await checkOurAffil(element, base)) arrOurAuthors.push(arrAffils[i])
+            
+            
+
+            if (await checkOurAffil(element, base)) {
+                if (arrAffils[i][0] != '[') {
+                    arrAffils[i] = '[' + arrAffils[i]
+                }
+    
+                let regexpBreckets = arrAffils[i].match(/\[(.*)\]/) || []
+    
+                if (regexpBreckets[1]) {
+                    let nameSplit = regexpBreckets[1].split('; ')
+                    for (let k in nameSplit) {
+                        let removeComms = nameSplit[k].replace(',', '')
+                        let correctName = removeComms.split(/\s+/).map((w,i) => i ? w.substring(0,1).toUpperCase() + '.' : w + ' ').join('')
+                        arrOurAuthors.push(correctName)
+                    }
+                }
+            }
         }
         let ourAuthors = arrOurAuthors.join(', ')
 
@@ -129,9 +147,9 @@ async function checkOurAffil(data, base) {
 }
 
 async function getOurAuthorsId(ourAuthors) {
-    let existOurAuthors = await author.list()
+    let existOurAuthors = await author.findAll()
     let existOurAuthorsMap = new Map()
-
+    
     existOurAuthors.forEach((element) => {
         let full = element.name.split(' ')
         let initals = full[1].split('.')
