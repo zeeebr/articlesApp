@@ -3,6 +3,8 @@ const env = require('./utils/env')
 const app = express()
 require('./count')
 
+app.use(express.static('public'))
+
 app.use(express.json({ extended: true, limit: '50mb' }))
 
 app.use('/', require('./routes/index.routes'))
