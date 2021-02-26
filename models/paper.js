@@ -21,6 +21,7 @@ class Paper {
             type: Sequelize.STRING,
             doi: Sequelize.STRING,
             duplicate: Sequelize.STRING,
+            percent: Sequelize.INTEGER,
             journal: Sequelize.TEXT,
             issn: Sequelize.STRING,
             volume: Sequelize.STRING,
@@ -99,6 +100,25 @@ class Paper {
             let data = new Map()
 
             for (let i in existId) data.set(existId[i].eid, true)
+            
+            return data
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async topicList(base) {
+        try {
+            let existTopics = await this.model.findAll({
+                attributes: ['eid', 'topic'],
+                where: {
+                    base: base
+                },
+                raw: true,
+            })
+            
+            let data = new Map()
+
+            for (let i in existTopics) data.set(existTopics[i].topic, existTopics[i].eid)
             
             return data
         } catch (err) {

@@ -10,21 +10,28 @@ const {
 } = require('./models/author')
 const author = new Author()
 const affil = new Affil()
+const levenshtein = require('js-levenshtein')
 
 affil.sync()
 paper.sync()
 
 async function parser(csvData) {
-    let base
+    let base, existTopics
 
     if (csvData[0]['EID']) {
         base = 'scopus'
+        // create list of all topics for finding duplicates between bases
+        existTopics = await paper.topicList('wos')
     } else if (csvData[0]['UT']) {
         base = 'wos'
+        existTopics = await paper.topicList('scopus')
+    } else {
+        console.log(`WTF? 'base' not found in parser.js!`)
+        return
     }
     
     let existId = await paper.idList(base)
-    
+
     for (let i in csvData) {
         let data = {}
 
@@ -34,12 +41,15 @@ async function parser(csvData) {
 
             let ourAuthors = await getOurAuthors(csvData[i], base)
             let ourAuthorsId = await getOurAuthorsId(ourAuthors)
+            let { percent, duplicate } = await findDuplicate(existTopics, csvData[i]['Название'])
 
             data['eid'] = eid
             data['base'] = base
             data['type'] = csvData[i]['Тип документа']
             data['topic'] = csvData[i]['Название']
             data['doi'] = csvData[i]['DOI']
+            data['duplicate'] = duplicate
+            data['percent'] = percent
             data['journal'] = csvData[i]['Название источника']
             data['issn'] = (csvData[i]['ISSN'] != '') ? `${csvData[i]['ISSN']}` : csvData[i]['ISBN']
             data['volume'] = csvData[i]['Том']
@@ -58,12 +68,15 @@ async function parser(csvData) {
 
             let ourAuthors = await getOurAuthors(csvData[i], base)
             let ourAuthorsId = await getOurAuthorsId(ourAuthors)
+            let { percent, duplicate } = await findDuplicate(existTopics, csvData[i]['TI'])
 
             data['eid'] = eid
             data['base'] = base
             data['type'] = csvData[i]['DT']
             data['topic'] = csvData[i]['TI']
             data['doi'] = csvData[i]['DI']
+            data['duplicate'] = duplicate
+            data['percent'] = percent
             data['journal'] = csvData[i]['SO']
             data['issn'] = (csvData[i]['SN'] != '') ? `${csvData[i]['SN']}` : csvData[i]['EI']
             data['volume'] = csvData[i]['VL']
@@ -76,8 +89,6 @@ async function parser(csvData) {
             data['year'] = csvData[i]['PY']
             data['frezee'] = false
             data['new'] = true
-        } else {
-            console.log(`WTF? base = ${base}`)
         }
         
         await paper.save(data)
@@ -181,6 +192,33 @@ async function getOurAuthorsId(ourAuthors) {
     }    
     
     return ourAuthorsId
+}
+
+async function findDuplicate(existTopics, topic) {
+    let duplicate = existTopics.get(topic)
+    
+    if (duplicate) return { percent: 100, duplicate: duplicate }
+    
+    let arrCompare = []
+
+    for (let [key, value] of existTopics.entries()) {
+        let compare = Math.round((topic.length - levenshtein(topic, key)) / topic.length * 100)
+        
+        arrCompare.push(compare)
+
+        if (compare > 90) {
+            console.log(compare, value)
+            return { percent: compare, duplicate: value }
+        }
+    }
+
+    let maxCompare = getMaxOfArray(arrCompare)
+
+    return { percent: maxCompare, duplicate: null }
+}
+
+function getMaxOfArray(numArray) {
+    return Math.max.apply(null, numArray)
 }
 
 module.exports = {
