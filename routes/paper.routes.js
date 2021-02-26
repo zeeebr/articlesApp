@@ -13,6 +13,8 @@ router.post('/find_one', auth, paper_controller.find_one)
 
 router.post('/update', auth, paper_controller.update)
 
+router.post('/update_our_authors', auth, paper_controller.update_our_authors)
+
 router.delete('/delete', auth, paper_controller.delete)
 
 router.get('/export', auth, paper_controller.export)

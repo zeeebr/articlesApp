@@ -1,4 +1,4 @@
-const parser = require('../parser')
+const { parser, getOurAuthorsId } = require('../parser')
 const {
     Paper
 } = require('../models/paper')
@@ -52,6 +52,16 @@ exports.update = async (req, res, next) => {
     }
 }
 
+exports.update_our_authors = async (req, res, next) => {
+    try {
+        let newId = await getOurAuthorsId(req.body.ourAuthors)
+        
+        res.status(200).json({ message: `OurAuthorsId for eid ${req.body.eid} updated!`, newId: newId })
+    } catch (err) {
+        next(err)
+    }
+}
+
 exports.delete = async (req, res, next) => {
     try {
         await paper.delete(req.body.eid)
@@ -65,7 +75,7 @@ exports.delete = async (req, res, next) => {
 exports.export = async (req, res, next) => {
     try {
         let data = await exportPapers()
-        //console.log(data)
+
         res.status(200).json(data)
     } catch (err) {
         next(err)

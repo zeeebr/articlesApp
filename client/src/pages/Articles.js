@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, Container, Row, Col, Button, Form } from 'react-bootstrap'
 import { useHttp } from '../hooks/http'
 import { useMessage } from '../hooks/message'
@@ -8,6 +8,8 @@ export const Articles = () => {
     const [ eid, setEid ] = useState(null)
     const [ paper, setPaper ] = useState(null)
 
+    useEffect(() => {}, [paper])
+
     const message = useMessage()
     const { loading, request, error, clearError } = useHttp()
     
@@ -16,13 +18,23 @@ export const Articles = () => {
 
         if(resp) {
             setPaper(resp)
-            console.log(resp)
+            //console.log(resp)
         } 
     }
 
     const updatePaper = async () => {
         let resp = await request('/paper/update', 'POST', paper)
         message(resp.message)
+    }
+
+    const updateAuthor = async () => {
+        let resp = await request('/paper/update_our_authors', 'POST', paper)
+        //message(resp.message)
+        let updateData = paper
+        updateData["ourAuthorsId"] = resp.newId
+        console.log(updateData)
+        setPaper(updateData)
+        console.log(paper)
     }
 
     const deletePaper = async () => {
@@ -73,7 +85,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.base} 
+                                    value={paper.base} 
                                     onChange={changeHandlerPaper}
                                     name="base"
                                     disabled
@@ -82,7 +94,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text"
                                     size="sm" 
-                                    defaultValue={paper.eid} 
+                                    value={paper.eid} 
                                     onChange={changeHandlerPaper}
                                     name="eid"
                                     disabled
@@ -91,7 +103,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.type} 
+                                    value={paper.type} 
                                     onChange={changeHandlerPaper}
                                     name="type"
                                     disabled
@@ -100,7 +112,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.journal} 
+                                    value={paper.journal} 
                                     onChange={changeHandlerPaper}
                                     name="journal"
                                     disabled
@@ -109,7 +121,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.ourAuthors} 
+                                    value={paper.ourAuthors} 
                                     onChange={changeHandlerPaper}
                                     name="ourAuthors"
                                 />
@@ -117,7 +129,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.ourAuthorsId} 
+                                    value={paper.ourAuthorsId} 
                                     onChange={changeHandlerPaper}
                                     name="ourAuthorsId"
                                 />
@@ -125,7 +137,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.doi} 
+                                    value={paper.doi} 
                                     onChange={changeHandlerPaper}
                                     name="doi"
                                 />
@@ -133,7 +145,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.year} 
+                                    value={paper.year} 
                                     onChange={changeHandlerPaper}
                                     name="year"
                                 />
@@ -141,7 +153,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.frezee} 
+                                    value={paper.frezee} 
                                     onChange={changeHandlerPaper}
                                     name="frezee"
                                 />
@@ -149,7 +161,7 @@ export const Articles = () => {
                                 <Form.Control 
                                     type="text" 
                                     size="sm"
-                                    defaultValue={paper.new} 
+                                    value={paper.new} 
                                     onChange={changeHandlerPaper}
                                     name="new"
                                     disabled
@@ -157,8 +169,26 @@ export const Articles = () => {
                             </Form>}
                         </Card.Body>
                         <Card.Footer>
-                            <Button onClick={updatePaper}>Update Paper</Button>
-                            <Button onClick={deletePaper} className="ml-3">Delete Paper</Button>
+                            <Button 
+                                onClick={updatePaper}
+                                disabled={!paper}
+                            >
+                                Update Paper
+                            </Button>
+                            <Button 
+                                onClick={deletePaper} 
+                                className="ml-3"
+                                disabled={!paper}
+                            >
+                                Delete Paper
+                            </Button>
+                            <Button 
+                                onClick={updateAuthor} 
+                                className="ml-3"
+                                disabled={!paper}
+                            >
+                                Update Authors IDs
+                            </Button>
                         </Card.Footer>
                     </Card>
                 </Col>

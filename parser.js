@@ -11,7 +11,6 @@ const {
 const author = new Author()
 const affil = new Affil()
 
-
 affil.sync()
 paper.sync()
 
@@ -184,4 +183,7 @@ async function getOurAuthorsId(ourAuthors) {
     return ourAuthorsId
 }
 
-module.exports = parser
+module.exports = {
+    parser: parser,
+    getOurAuthorsId: getOurAuthorsId
+}

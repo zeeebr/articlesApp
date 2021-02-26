@@ -34,7 +34,7 @@ export const useHttp = () => {
             if (response.status === 401) {
                 logoutHandler()
             }
-
+            //console.log('heh...')
             setLoading(false)
 
             return data
