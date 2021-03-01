@@ -31,7 +31,7 @@ if (env.HTTPS == true) {
         key: fs.readFileSync('./sslcert/privkey.pem'),
         cert: fs.readFileSync('./sslcert/fullchain.pem')
     }, app).listen(env.HTTPS_PORT,  () => {
-        console.log(`App listening on port ${env.PORT} (https)`)
+        console.log(`App listening on port ${env.HTTPS_PORT} (https)`)
     })
 } else {
     http.createServer(app).listen(env.PORT,  () => {

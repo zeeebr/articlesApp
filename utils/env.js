@@ -8,6 +8,7 @@ const env = envalid.cleanEnv(process.env, {
     DB_PASSWORD:        str(),
     DB_HOST:            str(),
     PORT:               port(),
+    HTTPS_PORT:         port(),
     REDIS_HOST:         str(),
     REDIS_PORT:         port(),
     UTC:                num(),
