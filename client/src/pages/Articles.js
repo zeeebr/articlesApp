@@ -117,6 +117,14 @@ export const Articles = () => {
                                     name="journal"
                                     disabled
                                 />
+                                <Form.Label className="mt-1" size="sm">topic</Form.Label>
+                                <Form.Control 
+                                    type="text" 
+                                    size="sm"
+                                    value={paper.topic} 
+                                    onChange={changeHandlerPaper}
+                                    name="topic"
+                                />
                                 <Form.Label className="mt-1" size="sm">Our authors</Form.Label>
                                 <Form.Control 
                                     type="text" 

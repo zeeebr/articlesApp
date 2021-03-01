@@ -1,6 +1,6 @@
 const envalid = require('envalid')
 
-const { str, port, num } = envalid
+const { str, port, num, bool } = envalid
  
 const env = envalid.cleanEnv(process.env, {
     DB_NAME:            str(),
@@ -12,7 +12,8 @@ const env = envalid.cleanEnv(process.env, {
     REDIS_PORT:         port(),
     UTC:                num(),
     SECRET:             str(),
-    YEAR:               num()
+    YEAR:               num(),
+    HTTPS:              bool()
 })
 
 module.exports = env

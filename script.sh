@@ -5,5 +5,5 @@ cd client
 npm install
 npm run build
 mv build ../public
-done
 sudo pm2 restart app --update-env
+done

@@ -9,7 +9,7 @@ let exportPapers = require('../exportPapers')
 exports.write_new = async (req, res, next) => {
     try {
         await paper.writeNew()
-        res.sendStatus(200)
+        res.sendStatus(200).json({ message: 'Done!' })
     } catch (err) {
         next(err)
     }
@@ -18,7 +18,7 @@ exports.write_new = async (req, res, next) => {
 exports.reset_new = async (req, res, next) => {
     try {
         await paper.resetNew()
-        res.sendStatus(200)
+        res.sendStatus(200).json({ message: 'Done!' })
     } catch (err) {
         next(err)
     }

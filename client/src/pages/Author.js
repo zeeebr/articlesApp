@@ -139,7 +139,7 @@ export const Author = () => {
                                 onChange={(selected) => {
                                     setAlias(selected)
                                 }}
-                                placeholder="Enter alias of author..." 
+                                placeholder="Enter alias of author (on russian)..." 
                                 name="alias"
                                 options={arrOfAliases} 
                             >

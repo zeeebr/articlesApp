@@ -1,6 +1,9 @@
+const https = require('https')
+const http = require('http')
 const express = require('express')
 const env = require('./utils/env')
 const app = express()
+const fs = require('fs')
 require('./count')
 
 app.use(express.static('public'))
@@ -23,4 +26,15 @@ app.use((err, req, res, next) => {
     })
 })
 
-app.listen(env.PORT, () => console.log(`App listening on port ${env.PORT}`))
+if (env.HTTPS == true) {
+    https.createServer({
+        key: fs.readFileSync('./sslcert/privkey.pem'),
+        cert: fs.readFileSync('./sslcert/fullchain.pem')
+    }, app).listen(env.HTTPS_PORT,  () => {
+        console.log(`App listening on port ${env.PORT} (https)`)
+    })
+} else {
+    http.createServer(app).listen(env.PORT,  () => {
+        console.log(`App listening on port ${env.PORT} (http)`)
+    })
+}
