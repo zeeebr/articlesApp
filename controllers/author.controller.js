@@ -93,7 +93,8 @@ exports.list_aliases = async (req, res, next) => {
 exports.add = async (req, res, next) => {
     try {
         await author.add(req.body)
-        res.status(200).json({ message: `Author (${req.body.name}) added!` })
+        let data = await author.findOneByName(req.body.name)
+        res.status(200).json({ message: `Author (${req.body.name}) added!`, data: data })
     } catch (err) {
         next(err)
     }

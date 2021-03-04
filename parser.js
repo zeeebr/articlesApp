@@ -116,9 +116,9 @@ async function getOurAuthors(data, base) {
         for (let i in arrAffils) {
             let element = arrAffils[i].toLowerCase()
             
+            let testAffil = element.split('] ')[1]
             
-
-            if (await checkOurAffil(element, base)) {
+            if (await checkOurAffil(testAffil, base)) {
                 if (arrAffils[i][0] != '[') {
                     arrAffils[i] = '[' + arrAffils[i]
                 }
@@ -207,7 +207,7 @@ async function findDuplicate(existTopics, topic) {
         arrCompare.push(compare)
 
         if (compare > 90) {
-            console.log(compare, value)
+            //console.log(compare, value)
             return { percent: compare, duplicate: value }
         }
     }

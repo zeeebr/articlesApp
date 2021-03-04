@@ -24,7 +24,7 @@ export const Author = () => {
     useEffect(() => {
         getListOfNames()
         getListOfAliases()
-    }, [])
+    }, [author])
 
     const parseOptions = { header: true }
 
@@ -59,13 +59,27 @@ export const Author = () => {
             frezee: true
         }
         let resp = await request('/author/add', 'POST', data)
-        message(resp.message)
+        
+        if(resp) {
+            message(resp.message)
+            console.log(123)
+            /* setAuthor({
+                id: resp.data.id,
+                name: resp.data.name,
+                alias: resp.data.alias,
+                inst: resp.data.inst,
+                cathedra: resp.data.cathedra,
+                frezee: resp.data.frezee
+            }) */
+        }
     }
 
     const deleteAuthor = async () => {
         let resp = await request('/author/delete', 'POST', author)
-        setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
-        message(resp.message)
+            .then(() => {
+                setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
+                message(resp.message)
+            })       
     }
 
     const findAuthorByName = async () => {

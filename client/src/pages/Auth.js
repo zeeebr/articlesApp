@@ -41,7 +41,7 @@ export const Auth = () => {
                     <Col></Col>
                     <Col>
                         <h2><Badge variant="secondary">ArticlesApp</Badge></h2>
-                        <Card border="info" style={{ width: '24rem' }}>
+                        <Card border="dark" style={{ width: '24rem' }}>
                             <Card.Header>Authorization</Card.Header>
                             <Card.Body>
                                 <Form>
@@ -64,7 +64,6 @@ export const Auth = () => {
                                         />
                                     </Form.Group>
                                     <Button 
-                                        variant="info" 
                                         type="submit"
                                         className="mr-2"
                                         onClick={loginHandler}
@@ -73,7 +72,6 @@ export const Auth = () => {
                                         Login
                                     </Button>
                                     <Button 
-                                        variant="info" 
                                         type="submit"
                                         onClick={registerHandler}
                                         disabled={loading}
