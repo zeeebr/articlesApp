@@ -105,7 +105,9 @@ async function getOurAuthors(data, base) {
         let arrOurAuthors = []
         for (let i in arrAffils) {
             let element = arrAffils[i].toLowerCase()
-            if (await checkOurAffil(element, base)) arrOurAuthors.push(arrAuthors[i])
+            let str = arrAuthors[i]
+            let correctName = str.split(' ')[0][0] + str.split(' ')[0].substring(1).toLowerCase() + ' ' + str.split(' ')[1]
+            if (await checkOurAffil(element, base)) arrOurAuthors.push(correctName)
         }
         let ourAuthors = arrOurAuthors.join(', ')
 
@@ -202,7 +204,7 @@ async function findDuplicate(existTopics, topic) {
     let arrCompare = []
 
     for (let [key, value] of existTopics.entries()) {
-        let compare = Math.round((topic.length - levenshtein(topic, key)) / topic.length * 100)
+        let compare = Math.round((topic.length - levenshtein(topic.toLowerCase(), key.toLowerCase())) / topic.length * 100)
         
         arrCompare.push(compare)
 
