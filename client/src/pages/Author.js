@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import CSVReader from 'react-csv-reader'
+import axios from 'axios'
 import { useHttp } from '../hooks/http'
 import { useMessage } from '../hooks/message'
 import { Card, Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap'
@@ -29,13 +30,13 @@ export const Author = () => {
     const parseOptions = { header: true }
 
     const getListOfNames = async () => {
-        let resp = await request('/author/list_names', 'GET')
+        let resp = await request('/author/list_names')
         
         setArrOfNames(resp)
     }
 
     const getListOfAliases = async () => {
-        let resp = await request('/author/list_aliases', 'GET')
+        let resp = await request('/author/list_aliases')
         
         setArrOfAliases(resp)
     }
@@ -58,28 +59,25 @@ export const Author = () => {
             cathedra: author.cathedra, 
             frezee: true
         }
+        
         let resp = await request('/author/add', 'POST', data)
         
-        if(resp) {
-            message(resp.message)
-            console.log(123)
-            /* setAuthor({
-                id: resp.data.id,
-                name: resp.data.name,
-                alias: resp.data.alias,
-                inst: resp.data.inst,
-                cathedra: resp.data.cathedra,
-                frezee: resp.data.frezee
-            }) */
-        }
+        message(resp.message)
+
+        setAuthor({
+            id: resp.data.id,
+            name: resp.data.name,
+            alias: resp.data.alias,
+            inst: resp.data.inst,
+            cathedra: resp.data.cathedra,
+            frezee: resp.data.frezee
+        })
     }
 
     const deleteAuthor = async () => {
-        let resp = await request('/author/delete', 'POST', author)
-            .then(() => {
-                setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
-                message(resp.message)
-            })       
+        let resp = await request('/author/delete', 'POST', author)  
+        message(resp.message)
+        setAuthor({ id: '', name: '', alias: '', inst: '', cathedra: '', frezee: ''})
     }
 
     const findAuthorByName = async () => {

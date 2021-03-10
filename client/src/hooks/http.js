@@ -14,9 +14,11 @@ export const useHttp = () => {
         history.push('/')
     }
 
-    const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
+    const request = async (url, method = 'GET', body = null) => {
         setLoading(true)
         try {
+            let headers = {}
+
             if (body) {
                 body = JSON.stringify(body)
                 headers['Content-Type'] = 'application/json'
@@ -34,7 +36,7 @@ export const useHttp = () => {
             if (response.status === 401) {
                 logoutHandler()
             }
-            //console.log('heh...')
+            
             setLoading(false)
 
             return data
@@ -43,7 +45,7 @@ export const useHttp = () => {
             setError(e.message)
             throw e
         }
-    }, [])
+    }
 
     const clearError = useCallback(() => setError(null), [])
 

@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
 import { useHttp } from '../hooks/http'
+import { useMessage } from '../hooks/message'
 import { Card, Button } from 'react-bootstrap'
 
 export const ControlPanel = () => {
     const { request } = useHttp()
+    const message = useMessage()
 
     const writeNewId = async () => {
-        await request('/paper/write_new', 'GET')
+        let resp = await request('/paper/write_new', 'GET')
+        message(resp.message)
     }
 
     const resetNewId = async () => {
-        await request('/paper/reset_new', 'GET')
+        let resp = await request('/paper/reset_new', 'GET')
+        message(resp.message)
     }
 
     return(

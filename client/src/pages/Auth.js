@@ -71,13 +71,13 @@ export const Auth = () => {
                                     >
                                         Login
                                     </Button>
-                                    <Button 
+                                    {/* <Button 
                                         type="submit"
                                         onClick={registerHandler}
                                         disabled={loading}
                                     >
                                         Registration
-                                    </Button>
+                                    </Button> */}
                                 </Form>
                             </Card.Body>
                         </Card>
