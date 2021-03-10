@@ -6,13 +6,17 @@ import { Container, Row, Col } from 'react-bootstrap'
 import Export from '../components/Export'
 
 export const Main = () => {
-    
-
     return(
         <Container fluid>
             <Row>
-                <Col sm={8}><CountTable /></Col>
-                <Col sm={4}><ImportCsv /><ControlPanel /><Export /></Col>
+                <Col sm={8}>
+                    <CountTable />
+                </Col>
+                <Col sm={4}>
+                    <ImportCsv />
+                    <ControlPanel />
+                    <Export />
+                </Col>
             </Row>
         </Container>
         

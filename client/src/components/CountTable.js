@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useHttp } from '../hooks/http'
 import { Table } from 'react-bootstrap'
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, LabelList } from 'recharts'
 
 const CountTable = () => {
     const [count, setCount] = useState({ year1: 2021 })
+    const [data, setData] = useState()
     const { request } = useHttp()
 
     useEffect(() => {
@@ -19,6 +21,18 @@ const CountTable = () => {
         
         if (response) {
             setCount(response)
+            
+            let arrData = []
+
+            for (let i = 6; i > 0; i--) {
+                arrData.push({
+                    year: response.year1 - i + 1,
+                    scopus: response.scopus[i],
+                    wos: response.wos[i]
+                })
+            }
+            console.log(arrData)
+            setData(arrData)
         }
     }
 
@@ -72,6 +86,23 @@ const CountTable = () => {
                     </tr>
                 </tbody>
             </Table>
+        }
+        { data && 
+            <ResponsiveContainer width="100%" height="70%">
+                <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="wos" fill="#661afb">
+                        <LabelList dataKey="wos" position="top" />
+                    </Bar>
+                    <Bar dataKey="scopus" fill="#e9711c">
+                        <LabelList dataKey="scopus" position="top" />
+                    </Bar>
+                </BarChart>
+            </ResponsiveContainer>
         }
         </>
     )
