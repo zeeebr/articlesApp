@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap'
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, LabelList } from 'recharts'
 
 const CountTable = () => {
-    const [count, setCount] = useState({ year1: 2021 })
+    const [count, setCount] = useState({ year1: 2022 })
     const [data, setData] = useState()
     const { request } = useHttp()
 
@@ -95,7 +95,7 @@ const CountTable = () => {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="wos" fill="#661afb">
+                    <Bar dataKey="wos" fill="#1E90FF">
                         <LabelList dataKey="wos" position="top" />
                     </Bar>
                     <Bar dataKey="scopus" fill="#e9711c">

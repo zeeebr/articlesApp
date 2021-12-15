@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import CSVReader from 'react-csv-reader'
-import axios from 'axios'
 import { useHttp } from '../hooks/http'
 import { useMessage } from '../hooks/message'
 import { Card, Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap'

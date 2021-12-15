@@ -17,7 +17,7 @@ export const NavBar = () => {
     return(
         <>
             <Navbar bg="dark" variant="dark">
-                <Navbar.Brand>ArticlesApp</Navbar.Brand>
+                <Navbar.Brand><font color="#e9711c">Articles</font><font color="#1E90FF">App</font></Navbar.Brand>
                 <Nav className="mr-auto">
                     <Nav.Link as={NavLink} to="/main">Main</Nav.Link>
                     <Nav.Link as={NavLink} to="/affil">Affiliations</Nav.Link>

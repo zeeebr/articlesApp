@@ -18,6 +18,8 @@ paper.sync()
 async function parser(csvData) {
     let base, existTopics
 
+    //console.log(csvData)
+
     if (csvData[0]['EID']) {
         base = 'scopus'
         // create list of all topics for finding duplicates between bases
@@ -101,11 +103,15 @@ async function parser(csvData) {
 async function getOurAuthors(data, base) {
     if (base == 'scopus') {
         let arrAuthors = data['Авторы'].split(', ')
+        console.log(arrAuthors)
         let arrAffils = data['Авторы организаций'].split('; ')
+        console.log(arrAffils)
         let arrOurAuthors = []
         for (let i in arrAffils) {
             let element = arrAffils[i].toLowerCase()
+            console.log(element)
             let str = arrAuthors[i]
+            console.log(str)
             let correctName = str.split(' ')[0][0] + str.split(' ')[0].substring(1).toLowerCase() + ' ' + str.split(' ')[1]
             if (await checkOurAffil(element, base)) arrOurAuthors.push(correctName)
         }
@@ -213,6 +219,8 @@ async function findDuplicate(existTopics, topic) {
             return { percent: compare, duplicate: value }
         }
     }
+
+    if (arrCompare.length == 0) return { percent: 33, duplicate: null }
 
     let maxCompare = getMaxOfArray(arrCompare)
 

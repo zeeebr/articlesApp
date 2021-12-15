@@ -14,6 +14,8 @@ client.on("error", function (err) {
     console.log("Error " + err);
 })
 
+paper.sync()
+
 cron.schedule('* * * * * *', main)
 
 async function main() {
